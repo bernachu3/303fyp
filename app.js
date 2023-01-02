@@ -10,43 +10,40 @@
       // TODO add stuff here
   };
 
-   // create the Contacts object store and indexes
+   // create the object store and indexes
  request.onupgradeneeded = (event) => {
      let db = event.target.result;
 
-     // create the Contacts object store
-     // with auto-increment id
-     let store = db.createObjectStore('Contacts', {
+     let store = db.createObjectStore('prices', {
          autoIncrement: true
      });
 
-     // create an index on the email property
-     let index = store.createIndex('email', 'email', {
+     // sets product barcode as primary key
+     let index = store.createIndex('barcode', 'barcode', {
          unique: true
      });
  };
 
- function insertContact(db, contact) {
+ function insert(db, price) {
     // create a new transaction
-    const txn = db.transaction('Contacts', 'readwrite');
+    const txn = db.transaction('prices', 'readwrite');
 
-    // get the Contacts object store
-    const store = txn.objectStore('Contacts');
+    // get the object store
+    const store = txn.objectStore('prices');
     //
-    let query = store.put(contact);
+    let query = store.put(price);
 
     // handle success case
     query.onsuccess = function (event) {
         console.log(event);
     };
 
-    // handle the error case
+    // error show
     query.onerror = function (event) {
         console.log(event.target.errorCode);
     }
 
-    // close the database once the
-    // transaction completes
+    // close the database
     txn.oncomplete = function () {
         db.close();
     };
@@ -55,16 +52,14 @@
   request.onsuccess = (event) => {
      const db = event.target.result;
 
-     insertContact(db, {
-         email: 'john.doe@outlook.com',
-         firstName: 'John',
-         lastName: 'Doe'
+     insert(db, {
+         barcode: '97800000001',
+         name: 'Apple'
      });
 
-     insertContact(db, {
-         email: 'jane.doe@gmail.com',
-         firstName: 'Jane',
-         lastName: 'Doe'
+     insert(db, {
+         barcode: '97800000002',
+         name: 'Orange'
      });
 };
 
